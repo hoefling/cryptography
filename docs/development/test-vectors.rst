@@ -559,7 +559,12 @@ Custom X.509 Vectors
   or the registration number etc).
 * ``admissions_extension_authority_not_provided.pem`` - A certificate containing
   the ``Admissions`` extension with no admissions and no admission authority,
-  signed by ``x509/custom/ca/rsa_ca.pem`` CA.
+* ``admissions_extension_cert_e256.pem`` - A certificate with the ``Admissions``
+  extension, signed using the ``ecPublicKey`` public key algorithm.
+  Submitted by gematik GmbH.
+* ``admissions_extension_cert_rsa2048.pem`` - A certificate with the ``Admissions``
+  extension, signed using the ``rsaEncryption`` public key algorithm.
+  Submitted by gematik GmbH.
 
 Custom X.509 Request Vectors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
