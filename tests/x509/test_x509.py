@@ -1895,7 +1895,7 @@ class TestRSACertificate:
                 "x509",
                 "custom",
                 "admissions_extension_optional_data_not_provided.pem",
-                ),
+            ),
             x509.load_pem_x509_certificate,
         )
         ext = cert.extensions.get_extension_for_class(x509.Admissions)
