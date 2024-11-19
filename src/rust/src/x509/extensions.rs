@@ -739,6 +739,22 @@ pub(crate) fn encode_extension(
             };
             Ok(Some(asn1::write_single(&admission)?))
         }
+        &oid::VALIDITY_MODEL_OID => {
+            let ka_bytes = cryptography_keepalive::KeepAlive::new();
+            let py_oid = ext.getattr(pyo3::intern!(py, "identifier"))?;
+            let id = py_oid_to_oid(py_oid)?;
+            let py_info = ext.getattr(pyo3::intern!(py, "info"))?;
+            let info = if !py_info.is_none() {
+                /*return Err(CryptographyError::from(
+                    pyo3::exceptions::PyValueError::new_err("info must be none"),
+                ))*/
+                Some(ka_bytes.add(py_info.extract::<pyo3::pybacked::PyBackedBytes>()?))
+            } else {
+                None
+            };
+            let validity_model = extensions::ValidityModel { model_id: id, model_info: info };
+            Ok(Some(asn1::write_single(&validity_model)?))
+        }
         _ => Ok(None),
     }
 }

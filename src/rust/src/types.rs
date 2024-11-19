@@ -269,6 +269,7 @@ pub static NAMING_AUTHORITY: LazyPyImport =
 pub static PROFESSION_INFO: LazyPyImport =
     LazyPyImport::new("cryptography.x509", &["ProfessionInfo"]);
 pub static ADMISSIONS: LazyPyImport = LazyPyImport::new("cryptography.x509", &["Admissions"]);
+pub static VALIDITY_MODEL: LazyPyImport = LazyPyImport::new("cryptography.x509", &["ValidityModel"]);
 
 pub static CRL_REASON_FLAGS: LazyPyImport =
     LazyPyImport::new("cryptography.x509.extensions", &["_CRLREASONFLAGS"]);

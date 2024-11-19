@@ -2443,6 +2443,33 @@ class Admissions(ExtensionType):
         return rust_x509.encode_extension_value(self)
 
 
+class ValidityModel(ExtensionType):
+    oid = ExtensionOID.VALIDITY_MODEL
+
+    def __init__(
+        self, identifier: ObjectIdentifier, info: bytes | None
+    ) -> None:
+        self._identifier = identifier
+        self._info = info
+
+    @property
+    def identifier(self) -> ObjectIdentifier:
+        return self._identifier
+
+    @property
+    def info(self) -> bytes | None:
+        return self._info
+
+    def __repr__(self) -> str:
+        return (
+            f"<ValidityModel(identifier={self.identifier}, "
+            f"info={self.info})>"
+        )
+
+    def public_bytes(self) -> bytes:
+        return rust_x509.encode_extension_value(self)
+
+
 class UnrecognizedExtension(ExtensionType):
     def __init__(self, oid: ObjectIdentifier, value: bytes) -> None:
         if not isinstance(oid, ObjectIdentifier):

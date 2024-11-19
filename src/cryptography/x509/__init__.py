@@ -76,6 +76,7 @@ from cryptography.x509.extensions import (
     TLSFeatureType,
     UnrecognizedExtension,
     UserNotice,
+    ValidityModel,
 )
 from cryptography.x509.general_name import (
     DirectoryName,
@@ -252,6 +253,7 @@ __all__ = [
     "UnrecognizedExtension",
     "UnsupportedGeneralNameType",
     "UserNotice",
+    "ValidityModel",
     "Version",
     "certificate_transparency",
     "load_der_x509_certificate",

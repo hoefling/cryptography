@@ -327,6 +327,12 @@ pub struct Admissions<'a> {
     >,
 }
 
+#[derive(asn1::Asn1Read, asn1::Asn1Write)]
+pub struct ValidityModel<'a> {
+    pub model_id: asn1::ObjectIdentifier,
+    pub model_info: Option<&'a [u8]>,
+}
+
 #[cfg(test)]
 mod tests {
     use super::{BasicConstraints, Extension, Extensions, KeyUsage};

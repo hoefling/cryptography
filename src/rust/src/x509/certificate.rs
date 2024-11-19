@@ -13,7 +13,7 @@ use cryptography_x509::extensions::{
     DistributionPoint, DistributionPointName, DuplicateExtensionsError, ExtendedKeyUsage,
     IssuerAlternativeName, KeyUsage, MSCertificateTemplate, NameConstraints, NamingAuthority,
     PolicyConstraints, PolicyInformation, PolicyQualifierInfo, ProfessionInfo, Qualifier,
-    RawExtensions, SequenceOfAccessDescriptions, SequenceOfSubtrees, UserNotice,
+    RawExtensions, SequenceOfAccessDescriptions, SequenceOfSubtrees, UserNotice, ValidityModel,
 };
 use cryptography_x509::extensions::{Extension, SubjectAlternativeName};
 use cryptography_x509::{common, oid};
@@ -947,6 +947,19 @@ pub fn parse_cert_ext<'p>(
                 types::ADMISSIONS
                     .get(py)?
                     .call1((admission_authority, py_admissions))?,
+            ))
+        }
+        oid::VALIDITY_MODEL_OID => {
+            let validity_model = ext.value::<ValidityModel<'_>>()?;
+            let py_oid = oid_to_py_oid(py, &validity_model.model_id)?;
+            let py_info = match validity_model.model_info {
+                Some(data) => pyo3::types::PyBytes::new(py, data).into_any(),
+                None => py.None().into_bound(py),
+            };
+            Ok(Some(
+                types::VALIDITY_MODEL
+                    .get(py)?
+                    .call1((py_oid, py_info))?,
             ))
         }
         _ => Ok(None),
