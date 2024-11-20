@@ -11,7 +11,7 @@ use cryptography_x509::extensions::{
     Admission, Admissions, AuthorityKeyIdentifier, BasicConstraints, DisplayText,
     DistributionPoint, DistributionPointName, DuplicateExtensionsError, ExtendedKeyUsage,
     IssuerAlternativeName, KeyUsage, MSCertificateTemplate, NameConstraints, NamingAuthority,
-    PolicyConstraints, PolicyInformation, PolicyQualifierInfo, ProfessionInfo, Qualifier,
+    PolicyConstraints, PolicyInformation, PolicyQualifierInfo, ProfessionInfo, QualifiedCertificateStatement, QualifiedCertificateStatements, Qualifier,
     RawExtensions, SequenceOfAccessDescriptions, SequenceOfSubtrees, UserNotice,
 };
 use cryptography_x509::extensions::{Extension, SubjectAlternativeName};
@@ -950,6 +950,16 @@ pub fn parse_cert_ext<'p>(
                     .get(py)?
                     .call1((admission_authority, py_admissions))?,
             ))
+        }
+        oid::QUALIFIED_CERTIFICATE_STATEMENTS_OID => {
+            let qc_statements = ext.value::<QualifiedCertificateStatements<'_>>()?;
+            let py_statements = pyo3::types::PyList::empty(py);
+            Ok(Some(
+                types::QUALIFIED_CERTIFICATE_STATEMENTS
+                    .get(py)?
+                    .call1((py_statements, ))?,
+            ))
+
         }
         _ => Ok(None),
     }

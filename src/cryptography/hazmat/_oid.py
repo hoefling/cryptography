@@ -40,6 +40,7 @@ class ExtensionOID:
     SIGNED_CERTIFICATE_TIMESTAMPS = ObjectIdentifier("1.3.6.1.4.1.11129.2.4.5")
     MS_CERTIFICATE_TEMPLATE = ObjectIdentifier("1.3.6.1.4.1.311.21.7")
     ADMISSIONS = ObjectIdentifier("1.3.36.8.3.3")
+    QUALIFIED_CERTIFICATE_STATEMENTS = ObjectIdentifier("1.3.6.1.5.5.7.1.3")
 
 
 class OCSPExtensionOID:

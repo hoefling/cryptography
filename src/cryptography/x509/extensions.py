@@ -2443,6 +2443,22 @@ class Admissions(ExtensionType):
         return rust_x509.encode_extension_value(self)
 
 
+class QualifiedCertificateStatement:
+    pass
+
+
+class QualifiedCertificateStatements(ExtensionType):
+    oid = ExtensionOID.QUALIFIED_CERTIFICATE_STATEMENTS
+
+    def __init__(
+        self,
+        statements: typing.Iterable[QualifiedCertificateStatement],
+    ) -> None:
+        self._statements = statements
+
+    __len__, __iter__, __getitem__ = _make_sequence_methods("_statements")
+
+
 class UnrecognizedExtension(ExtensionType):
     def __init__(self, oid: ObjectIdentifier, value: bytes) -> None:
         if not isinstance(oid, ObjectIdentifier):

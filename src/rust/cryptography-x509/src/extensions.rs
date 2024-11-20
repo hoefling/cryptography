@@ -333,6 +333,26 @@ pub struct Admissions<'a> {
     >,
 }
 
+#[derive(asn1::Asn1Read, asn1::Asn1Write)]
+pub struct SemanticsInformation<'a> {
+    pub id: Option<asn1::ObjectIdentifier>,
+    pub name_registration_authorities: name::SequenceOfGeneralName<'a>,
+}
+
+#[derive(asn1::Asn1Read, asn1::Asn1Write)]
+pub struct QualifiedCertificateStatement<'a> {
+    pub id: asn1::ObjectIdentifier,
+    pub info: Option<SemanticsInformation<'a>>,
+}
+
+#[derive(asn1::Asn1Read, asn1::Asn1Write)]
+pub struct QualifiedCertificateStatements<'a> {
+    pub statements: common::Asn1ReadableOrWritable<
+        asn1::SequenceOf<'a, QualifiedCertificateStatement<'a>>,
+        asn1::SequenceOfWriter<'a, QualifiedCertificateStatement<'a>, Vec<QualifiedCertificateStatement<'a>>>,
+    >,
+}
+
 #[cfg(test)]
 mod tests {
     use super::{BasicConstraints, Extension, Extensions, KeyUsage};
