@@ -12,6 +12,7 @@ import warnings
 
 from cryptography import utils
 from cryptography.hazmat.bindings._rust import x509 as rust_x509
+from cryptography.x509 import Attribute
 from cryptography.x509.oid import NameOID, ObjectIdentifier
 
 
@@ -31,7 +32,7 @@ class _ASN1Type(utils.Enum):
 
 
 _ASN1_TYPE_TO_ENUM = {i.value: i for i in _ASN1Type}
-_NAMEOID_DEFAULT_TYPE: dict[ObjectIdentifier, _ASN1Type] = {
+_NAMEOID_DEFAULT_TYPE: dict[NameOID | ObjectIdentifier, _ASN1Type] = {
     NameOID.COUNTRY_NAME: _ASN1Type.PrintableString,
     NameOID.JURISDICTION_COUNTRY_NAME: _ASN1Type.PrintableString,
     NameOID.SERIAL_NUMBER: _ASN1Type.PrintableString,
@@ -41,7 +42,7 @@ _NAMEOID_DEFAULT_TYPE: dict[ObjectIdentifier, _ASN1Type] = {
 }
 
 # Type alias
-_OidNameMap = typing.Mapping[ObjectIdentifier, str]
+_OidNameMap = typing.Mapping[NameOID | ObjectIdentifier, str]
 _NameOidMap = typing.Mapping[str, ObjectIdentifier]
 
 #: Short attribute names from RFC 4514:
@@ -59,7 +60,7 @@ _NAMEOID_TO_NAME: _OidNameMap = {
 }
 _NAME_TO_NAMEOID = {v: k for k, v in _NAMEOID_TO_NAME.items()}
 
-_NAMEOID_LENGTH_LIMIT = {
+_NAMEOID_LENGTH_LIMIT: dict[NameOID | ObjectIdentifier, tuple[int, int]] = {
     NameOID.COUNTRY_NAME: (2, 2),
     NameOID.JURISDICTION_COUNTRY_NAME: (2, 2),
     NameOID.COMMON_NAME: (1, 64),
@@ -114,11 +115,14 @@ def _unescape_dn_value(val: str) -> str:
     return _RFC4514NameParser._PAIR_RE.sub(sub, val)
 
 
-class NameAttribute:
+from typing import AnyStr, Literal
+
+
+class NameAttribute(typing.Generic[AnyStr]):
     def __init__(
         self,
-        oid: ObjectIdentifier,
-        value: str | bytes,
+        oid: NameOID | ObjectIdentifier,
+        value: AnyStr,
         _type: _ASN1Type | None = None,
         *,
         _validate: bool = True,
@@ -166,15 +170,15 @@ class NameAttribute:
             raise TypeError("_type must be from the _ASN1Type enum")
 
         self._oid = oid
-        self._value = value
-        self._type = _type
+        self._value: AnyStr = value
+        self._type: _ASN1Type = _type
 
     @property
     def oid(self) -> ObjectIdentifier:
         return self._oid
 
     @property
-    def value(self) -> str | bytes:
+    def value(self) -> AnyStr:
         return self._value
 
     @property
@@ -230,8 +234,26 @@ class RelativeDistinguishedName:
         if len(self._attribute_set) != len(attributes):
             raise ValueError("duplicate attributes are not allowed")
 
+    @typing.overload
     def get_attributes_for_oid(
-        self, oid: ObjectIdentifier
+        self,
+        oid: Literal[NameOID.X500_UNIQUE_IDENTIFIER],
+    ) -> list[NameAttribute[bytes]]: ...
+
+    @typing.overload
+    def get_attributes_for_oid(
+        self,
+        oid: NameOID,
+    ) -> list[NameAttribute[str]]: ...
+
+    @typing.overload
+    def get_attributes_for_oid(
+        self,
+        oid: ObjectIdentifier,
+    ) -> list[NameAttribute[str]]: ...
+
+    def get_attributes_for_oid(
+        self, oid: NameOID | ObjectIdentifier
     ) -> list[NameAttribute]:
         return [i for i in self if i.oid == oid]
 
@@ -323,8 +345,26 @@ class Name:
             for attr in reversed(self._attributes)
         )
 
+    @typing.overload
     def get_attributes_for_oid(
-        self, oid: ObjectIdentifier
+        self,
+        oid: Literal[NameOID.X500_UNIQUE_IDENTIFIER],
+    ) -> list[NameAttribute[bytes]]: ...
+
+    @typing.overload
+    def get_attributes_for_oid(
+        self,
+        oid: NameOID,
+    ) -> list[NameAttribute[str]]: ...
+
+    @typing.overload
+    def get_attributes_for_oid(
+        self,
+        oid: ObjectIdentifier,
+    ) -> list[NameAttribute[str]]: ...
+
+    def get_attributes_for_oid(
+        self, oid: NameOID | ObjectIdentifier
     ) -> list[NameAttribute]:
         return [i for i in self if i.oid == oid]
 

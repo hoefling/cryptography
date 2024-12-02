@@ -4,6 +4,8 @@
 
 from __future__ import annotations
 
+import enum
+
 from cryptography.hazmat.bindings._rust import (
     ObjectIdentifier as ObjectIdentifier,
 )
@@ -53,7 +55,7 @@ class CRLEntryExtensionOID:
     INVALIDITY_DATE = ObjectIdentifier("2.5.29.24")
 
 
-class NameOID:
+class NameOID(enum.Enum):
     COMMON_NAME = ObjectIdentifier("2.5.4.3")
     COUNTRY_NAME = ObjectIdentifier("2.5.4.6")
     LOCALITY_NAME = ObjectIdentifier("2.5.4.7")
